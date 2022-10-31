@@ -6,7 +6,7 @@ clear all
 
 global arduino_object; % Create an Arduino object
 
-arduino_object = arduino('com6', 'Uno');  %this is an internal program in matlab that creates a follower program in the Arduino that is controlled by the leader matlab program.   The first time this runs it will take a little longer as it will downlad the follower program into the arduino.
+arduino_object = arduino('com4', 'Uno');  %this is an internal program in matlab that creates a follower program in the Arduino that is controlled by the leader matlab program.   The first time this runs it will take a little longer as it will downlad the follower program into the arduino.
 
 %Set and configure pins for arduino
 global stepX dirX stepY dirY enPin;
