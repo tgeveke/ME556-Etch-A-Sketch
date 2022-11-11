@@ -1,7 +1,7 @@
 clear all
 close all
 
-baseImage = imread('psu_image.jpg');
+baseImage = imread('basepic.jpg');
 
 baseImage = imresize(baseImage, 1);
 bwImage = rgb2gray(baseImage);
@@ -40,7 +40,7 @@ while pointsLeft > 1
     curY = closest_row;
 
     addpoints(h, curY, numCols - curX)
-    drawnow
+    drawnow limitrate
 
 end
 

@@ -13,10 +13,9 @@ bwImage = rgb2gray(baseImage);
 [numRows, numCols] = size(bwImage);
 
 h = animatedline;
-%axis([0, numCols, 0, numRows])
+axis([0, numCols, 0, numRows])
 [row, col] = find(bwImage < 255);
 mat = [row col];
-mat = mat * 3;
 
 pointsLeft = 2;
 curX = numRows;
@@ -36,6 +35,6 @@ while pointsLeft > 1
     curX = closest_row;
     curY = closest_col;
 
-    addpoints(h, curY/3, numRows - curX + 250)
+    addpoints(h, curY, numRows - curX)
     drawnow limitrate
 end

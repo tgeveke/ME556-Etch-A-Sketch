@@ -6,7 +6,7 @@ clear all
 
 global arduino_object; % Create an Arduino object
 
-arduino_object = arduino('com4', 'Uno');  %this is an internal program in matlab that creates a follower program in the Arduino that is controlled by the leader matlab program.   The first time this runs it will take a little longer as it will downlad the follower program into the arduino.
+arduino_object = arduino('com6', 'Uno');  %this is an internal program in matlab that creates a follower program in the Arduino that is controlled by the leader matlab program.   The first time this runs it will take a little longer as it will downlad the follower program into the arduino.
 
 %Set and configure pins for arduino
 global stepX dirX stepY dirY enPin;
@@ -47,21 +47,48 @@ time = 0; % This value of time pauses between movements. note because of arduino
 
 % Pull up list of x,y points to travel to, mat
 % A seperate function should be put here.
-[mat]=dots();    
+% [mat]=dots();    
 
-% baseImage = imread('psu_image.jpg');
-% baseImage = imresize(baseImage, .5);
-% bwImage = rgb2gray(baseImage);
-% [row, col] = find(bwImage < 200);
-% mat = [row col];
+baseImage = imread('basepic.jpg');
+scale = 0.3;
+baseImage = imresize(baseImage, scale);
+baseImage = baseImage * (1/scale);
+bwImage = rgb2gray(baseImage);
+[numRows, numCols] = size(bwImage);
 
+h = animatedline;
+axis([0, 500, 0, 800])
+[row, col] = find(bwImage < 255);
+mat = [row col];
+mat = mat * 3;
+
+pointsLeft = 2;
+curX = numCols;
+curY = 0;
 
 %runs through each travel point using fuction moveitto.  This function
 %relies on the global variables that are setup in this program and therefore cannot be run
 %without the basecode.
 
-for i = 1:length(mat)
-    moveitto(mat(i,1), mat(i,2));
+while pointsLeft > 1
+    numLeft = size(mat);
+    pointsLeft = numLeft(1);
+    disp(pointsLeft);
+    
+    index = dsearchn(mat, [curX curY]);
+    closest_col = mat(index, 2); % Y
+    closest_row = mat(index, 1); % X
+   
+    mat(index, :) = [];
+
+    curX = closest_row;
+    curY = closest_col;
+
+    addpoints(h, curY, numRows - curX + 350)
+    drawnow limitrate
+
+    moveitto(curY-15, numRows - curX + 350);
+
 end
 
 % Return home
