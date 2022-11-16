@@ -1,41 +1,45 @@
 clear all
 close all
 
-baseImage = imread('basepic.jpg');
-
-scale = 0.3;
-
-baseImage = imresize(baseImage, [500, 800]);
-baseImage = imresize(baseImage, scale);
-baseImage = baseImage * 10;
-
+baseImage = imread('psu_image.jpg');
 bwImage = rgb2gray(baseImage);
-[numRows, numCols] = size(bwImage);
+numRows = 500;
+numCols = 800;
 
+% Downsample image
+scale = 0.25;
+bwImage = imresize(bwImage, scale);
+
+% Find areas under threshold to be drawn
+[row, col] = find(bwImage < 150);
+mat = [col row];
+mat = mat.*(1 / scale);
+
+% Set start of drawing to bottom left of Etch-A-Sketch
+curX = 0;
+curY = numRows;
+
+% Plotting
 h = animatedline;
-%axis([0, numCols, 0, numRows])
-[row, col] = find(bwImage < 255);
-mat = [row col];
-mat = mat * 3;
+axis([0, numCols, 0, numRows])
 
-pointsLeft = 2;
-curX = numRows;
-curY = 0;
-
-while pointsLeft > 1
-    numLeft = size(mat);
-    pointsLeft = numLeft(1);
+% Calculate points to draw
+pointsLeft = size(mat, 1);
+while pointsLeft > 0
+    pointsLeft = pointsLeft - 1;
     disp(pointsLeft);
     
+    % Find index of closest (x, y) pair in mat
     index = dsearchn(mat, [curX curY]);
-    closest_col = mat(index, 2); % Y
-    closest_row = mat(index, 1); % X
+
+    % Set current point to index
+    curX = mat(index, 1);
+    curY = mat(index, 2);
    
+    % Remove index to be drawn
     mat(index, :) = [];
 
-    curX = closest_row;
-    curY = closest_col;
-
-    addpoints(h, curY/3, numRows - curX + 250)
+    % Draw on figure
+    addpoints(h, curX, numRows - curY)
     drawnow limitrate
 end
