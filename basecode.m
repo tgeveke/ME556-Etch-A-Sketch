@@ -30,7 +30,7 @@ currentx = 0;
 currenty = 0;
 
 % Establishes where backlash starts: 0 is negative, 1 is positive
-% Note initial value only influences minor position of x,y start axis
+% Note initial value only influences minor position of x, y start axis
 global currentdirx currentdiry;
 currentdirx = 1;
 currentdiry = 1;
@@ -50,48 +50,71 @@ time = 0; % This value of time pauses between movements. note because of arduino
 % [mat]=dots();    
 
 baseImage = imread('basepic.jpg');
-scale = 0.3;
-baseImage = imresize(baseImage, scale);
-baseImage = baseImage * (1/scale);
+baseImage = insertText(baseImage, [100, 400], "ME556", FontSize = 100, TextColor='black', BoxOpacity = 0);
+
 bwImage = rgb2gray(baseImage);
-[numRows, numCols] = size(bwImage);
+numRows = 550;
+numCols = 700;
 
+axis([0, numCols, 0, numRows])
+
+
+% Set start of drawing to bottom left of Etch-A-Sketch
+curX = 0;
+curY = numRows;
+
+% Plotting
 h = animatedline;
-axis([0, 500, 0, 800])
-[row, col] = find(bwImage < 255);
-mat = [row col];
-mat = mat * 3;
 
-pointsLeft = 2;
-curX = numCols;
-curY = 0;
+% Downsample image
+bwImage = imresize(bwImage, [numRows numCols]);
+
+scale = 0.4;
+bwImage = imresize(bwImage, scale);
+
+% Find areas under threshold to be drawn
+[row, col] = find(bwImage < 150);
+mat = [col row];
+mat = mat.*(1 / scale);
 
 %runs through each travel point using fuction moveitto.  This function
 %relies on the global variables that are setup in this program and therefore cannot be run
 %without the basecode.
 
-while pointsLeft > 1
-    numLeft = size(mat);
-    pointsLeft = numLeft(1);
-    disp(pointsLeft);
+% Calculate points to draw
+pointsLeft = size(mat, 1);
+disp(pointsLeft)
+while pointsLeft > 0
+    pointsLeft = pointsLeft - 1;
+%     disp(pointsLeft);
     
+    % Find index of closest (x, y) pair in mat
     index = dsearchn(mat, [curX curY]);
-    closest_col = mat(index, 2); % Y
-    closest_row = mat(index, 1); % X
+
+    % Set current point to index
+    curX = mat(index, 1);
+    curY = mat(index, 2);
    
+    % Remove index to be drawn
     mat(index, :) = [];
 
-    curX = closest_row;
-    curY = closest_col;
-
-    addpoints(h, curY, numRows - curX + 350)
+    % Draw on figure
+    addpoints(h, curX, numRows - curY)
     drawnow limitrate
-
-    moveitto(curY-15, numRows - curX + 350);
-
+    moveitto(curX, numRows - curY)
 end
 
-% Return home
-moveitto(0, 0);
+% pixelsLeft = smallrows * smallcols;
+% for col = 1 : smallcols
+%     for row = 1 : smallrows
+%         val = double(bwImage(row, col));
+%         width = interp1([255, 0], [0, colwidth], val);
+%     
+%         % Draw on figure
+%         addpoints(h, (colwidth * col) + width, rowheight * (smallrows - row))
+%         %moveitto((colwidth * col) + width, rowheight * (smallrows - row));
+%         drawnow limitrate
+%     end
+% end
 
 clear all; % Clears all variables, including most importantly "a" which shuts down the stepper motors

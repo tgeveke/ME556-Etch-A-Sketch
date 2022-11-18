@@ -1,10 +1,12 @@
 clear all
 close all
 
-baseImage = imread('psu_image.jpg');
+baseImage = imread('basepic.jpg');
 bwImage = rgb2gray(baseImage);
 numRows = 500;
 numCols = 800;
+imresize(bwImage, [500 800])
+
 
 % Downsample image
 scale = 0.25;
