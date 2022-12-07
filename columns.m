@@ -14,9 +14,9 @@ curY = numRows;
 h = animatedline;
 
 % Downsample image
-colwidth = 10;
+colwidth = 6;
 smallcols = (numCols / colwidth);
-rowheight = 12;
+rowheight = 6;
 smallrows = (numRows / rowheight);
 bwImage = imresize(bwImage, [smallrows smallcols]);
 
@@ -30,6 +30,7 @@ for col = 1 : smallcols
     
         % Draw on figure
         %addpoints(h, (colwidth * col), rowheight * (smallrows - row) + rowheight)
+        addpoints(h, (colwidth * col), rowheight * (smallrows - row))        
         addpoints(h, (colwidth * col) + width, rowheight * (smallrows - row))
 
         drawnow limitrate
