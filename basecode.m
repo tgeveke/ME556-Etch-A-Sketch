@@ -101,7 +101,7 @@ while pointsLeft > 0
     % Draw on figure
     addpoints(h, curX, numRows - curY)
     drawnow limitrate
-    moveitto(curX, numRows - curY)
+    %moveitto(curX, numRows - curY)
 end
 
 % pixelsLeft = smallrows * smallcols;
